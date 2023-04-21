@@ -96,3 +96,22 @@ resource "aws_route_table_association" "Priv-Sub-Assoc-CmZ-1b" {
   subnet_id      = aws_subnet.Priv-Sub-CmZ-1b.id
   route_table_id = aws_route_table.Priv-RT-CmZ.id
 }
+
+resource "aws_network_interface" "Priv-Nic-CmZ-EC1-1a" {
+  subnet_id   = aws_subnet.Priv-Sub-CmZ-1a.id
+  private_ips = ["10.1.1.101"]
+
+  tags = {
+    Name = "Priv-Nic-CmZ-EC1-1a"
+  }
+}
+
+resource "aws_instance" "Priv-Inst-CmZ-EC1-1a" {
+  ami           = "ami-0ec7f9846da6b0f61" # eu-central-1
+  instance_type = "t2.micro"
+
+  network_interface {
+    network_interface_id = aws_network_interface.Priv-Nic-CmZ-EC1-1a.id
+    device_index         = 0
+  }
+}

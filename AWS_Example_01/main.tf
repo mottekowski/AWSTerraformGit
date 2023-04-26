@@ -110,8 +110,37 @@ resource "aws_instance" "Priv-Inst-CmZ-EC1-1a" {
   ami           = "ami-0ec7f9846da6b0f61" # eu-central-1
   instance_type = "t2.micro"
 
+
   network_interface {
     network_interface_id = aws_network_interface.Priv-Nic-CmZ-EC1-1a.id
     device_index         = 0
   }
+
+  root_block_device {
+    tags = {
+      Name = "os-disk-EC1"
+    }
+    volume_type = "gp3"
+  }
+  tags = {
+    Name =  "Priv-Inst-CmZ-EC1-1a"
+  }
+}
+
+resource "aws_ebs_volume" "EBS-CmZ-1a" {
+  availability_zone = "eu-central-1a"
+  size              = 20
+  type              = "gp3"
+
+  tags = {
+    Name = "EBS-CmZ-1a"
+  }
+}
+
+resource "aws_eip" "Pub-IP-EC1" {
+  instance = aws_instance.Priv-Inst-CmZ-EC1-1a.id
+  vpc      = true
+  depends_on = [
+    aws_instance.Priv-Inst-CmZ-EC1-1a
+  ]
 }
